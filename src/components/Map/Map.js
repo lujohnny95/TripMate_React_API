@@ -6,7 +6,7 @@ import Rating from "@material-ui/lab";
 
 import useStyles from "./styles";
 
-const Map = ({ setCoordinates, setBounds, coordinates }) => {
+const Map = ({ setCoordinates, setBounds, coordinates, setChildClicked }) => {
     const classes = useStyles();
     const isMobile = useMediaQuery("(min-width:600px)");
 
@@ -24,9 +24,34 @@ const Map = ({ setCoordinates, setBounds, coordinates }) => {
                     setCoordinates({ lat: e.center.lat, lng: e.center.lng });
                     setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw })
                 }}
-                onChildClick={""}
+                onChildClick={(child) => setChildClicked(child)}
             >
-
+                {places?.map((place, i) => (
+                    <div
+                        className={classes.markerContainer}
+                        lat={Number(place.latitude)}
+                        lng={Number(place.longitude)}
+                        key={i}
+                    >
+                        {
+                            isMobile ? (
+                                <LocationOnOutlinedIcon color="primary" fontSize="large" />
+                            ) : (
+                                <Paper elevation={3} className={classes.paper}>
+                                    <Typography className={classes.Typography} variant="subtitle1">
+                                        {place.name}
+                                    </Typography>
+                                    <img 
+                                        className={classes.pointer}
+                                        src={place.photo ? place.photo.images.large.url : ""}
+                                        alt={place.name}
+                                    />
+                                    <Rating size="small" value={Number(place.rating)} readOnly />
+                                </Paper>
+                            )
+                        }
+                    </div>
+                ))}
             </GoogleMapReact>
         </div>
     )
